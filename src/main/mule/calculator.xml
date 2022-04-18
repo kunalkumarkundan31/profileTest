@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:api-gateway="http://www.mulesoft.org/schema/mule/api-gateway" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+http://www.mulesoft.org/schema/mule/api-gateway http://www.mulesoft.org/schema/mule/api-gateway/current/mule-api-gateway.xsd">
+	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="6fc8a8a0-7ab3-4cae-8da3-ae32d5146a64" >
+		<http:listener-connection host="0.0.0.0" port="8081" />
+	</http:listener-config>
+	<global-property doc:name="Global Property" doc:id="adac59b4-8f83-4c59-9561-f9e54c9046db" name="autoDiscoveryId" value="autoDiscoveryId" />
+	<flow name="calculatorFlow" doc:id="d866708e-88c9-47e9-8327-f423ff303eba" >
+		<http:listener doc:name="Listener" doc:id="50eec647-bb68-41a5-9997-8e6121a1c8ed" config-ref="HTTP_Listener_config" path="/cal"/>
+		<set-variable value="#[attributes.queryParams.num1]" doc:name="numberOne" doc:id="423f61cb-eb8c-43ec-b73c-edf604f6c69a" variableName="numberOne"/>
+		<set-variable value="#[attributes.queryParams.num2]" doc:name="numberTwo" doc:id="7777ee9b-add6-49e0-9a0a-eba7326297c7" variableName="numberTwo"/>
+		<set-variable value="#[attributes.queryParams.op]" doc:name="operation" doc:id="39216ac6-97e1-4245-9f22-7ee7cab9222d" variableName="operation"/>
+		<set-variable value="test" doc:name="Set Variable" doc:id="603b9c77-4312-49d3-9c1c-8b488a4cd080" variableName="test"/>
+		<choice doc:name="Choice" doc:id="b52bd6f5-4d07-41a6-b0b3-d7c704972683" >
+			<when expression='#[vars.operation == "add"]'>
+				<flow-ref doc:name="addition" doc:id="7711f6d2-e4f5-4658-bb7c-48d8d4caf426" name="addition"/>
+			</when>
+			<when expression='#[vars.operation == "multiply"]'>
+				<flow-ref doc:name="multiplication" doc:id="339dcbb4-00f5-49b8-806a-7619c0442289" name="multiplication"/>
+			</when>
+			<otherwise >
+				<ee:transform doc:name="Transform Message" doc:id="2826f3ee-449d-495d-a324-e02597cd9480" >
+					<ee:message >
+						<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	"Status": "No operation provided"
+	
+}]]></ee:set-payload>
+					</ee:message>
+				</ee:transform>
+			</otherwise>
+		</choice>
+		<logger level="INFO" doc:name="Logger" doc:id="8f1f6138-942e-41b3-866d-55b633432754" message="completed flow"/>
+	</flow>
+	<sub-flow name="addition" doc:id="679671f3-35ca-4a9f-b95d-a31cac280271" >
+		<ee:transform doc:name="Transform Message" doc:id="aa9e7cb5-ba7d-4d26-8661-7c89f05c70b3" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	"Status": "Success",
+	"Result": (vars.numberOne + vars.numberTwo)
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</sub-flow>
+	<sub-flow name="multiplication" doc:id="e120a37e-1e14-417e-bccf-de0a8f6e7208" >
+		<ee:transform doc:name="Transform Message" doc:id="9cde5e07-c6b1-48a6-9e78-18fe5da9fab9" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	"Status": "Success",
+	"Result": (vars.numberOne * vars.numberTwo)
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</sub-flow>
+</mule>

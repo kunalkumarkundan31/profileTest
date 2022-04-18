@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:munit="http://www.mulesoft.org/schema/mule/munit" xmlns:munit-tools="http://www.mulesoft.org/schema/mule/munit-tools"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xsi:schemaLocation="
+		http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+		http://www.mulesoft.org/schema/mule/munit http://www.mulesoft.org/schema/mule/munit/current/mule-munit.xsd
+		http://www.mulesoft.org/schema/mule/munit-tools  http://www.mulesoft.org/schema/mule/munit-tools/current/mule-munit-tools.xsd">
+	<munit:config name="calculator-test-suite.xml" />
+	<munit:test name="calculator-test-suite-calculatorFlowTest" doc:id="a3e93050-3a1e-4c7a-8a03-9c1c10001033" description="Test">
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="Mock when" doc:id="020717eb-71e7-4f9e-911b-74dd74161201" processor="set-variable">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="603b9c77-4312-49d3-9c1c-8b488a4cd080" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:variables >
+						<munit-tools:variable key="numberOne" value="#[output application/java --- 20]" mediaType="application/java" encoding="UTF-8" />
+						<munit-tools:variable key="numberTwo" value="#[output application/java --- 30]" mediaType="application/java" encoding="UTF-8" />
+						<munit-tools:variable key="operation" value='#[output application/java --- "add"]' mediaType="application/java" encoding="UTF-8" />
+					</munit-tools:variables>
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+		</munit:behavior>
+		<munit:execution >
+			<flow-ref doc:name="Flow-ref to calculatorFlow" doc:id="e62fe97b-304f-470b-b7da-7132b5e54a5f" name="calculatorFlow"/>
+		</munit:execution>
+	</munit:test>
+
+
+</mule>
